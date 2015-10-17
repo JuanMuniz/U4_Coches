@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">U4_Coches</string>
+    <string name="pista">Choose an option: </string>
+    <string name="overwrite">Overwrite</string>
+    <string name="add">Add</string>
+    <string name="carmodel">Write the car brand</string>
+    <string name="addOver"> Add/Overwrite </string>
+    <string name="LstSpi"> View cars as: </string>
+    <string name="lstv">List</string>
+    <string name="Spin">Spinner List</string>
+    <string name="field">Log field</string>
+    <string name="log">LogCat: </string>
+    <string name="LstSpiBtn">View car list</string>
+</resources>
