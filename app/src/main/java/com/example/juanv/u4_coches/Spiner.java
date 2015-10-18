@@ -28,13 +28,13 @@ public class Spiner extends Activity {
         spin_coches = (Spinner) findViewById(R.id.idCoches);
 
         // Fonte de datos
-        Bundle bundle=getIntent().getExtras();
         ArrayList<String> coches;
-        coches=getIntent().getStringArrayListExtra("coches");
+        coches=getIntent().getStringArrayListExtra("car");
 
         // Enlace do adaptador cos datos
         ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, coches);
 
+        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Enlace do adaptador co Spiner do Layout.
         spin_coches.setAdapter(adaptador);
 
@@ -43,7 +43,7 @@ public class Spiner extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-                Toast.makeText(getBaseContext(), "Selected: " + ((TextView) view).getText(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Position "+pos +"  "+ ((TextView) view).getText(), Toast.LENGTH_LONG).show();
 
             }
 

@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ListVista extends Activity {
@@ -28,7 +29,7 @@ public class ListVista extends Activity {
 
         ArrayList<String> coches;
         coches=getIntent().getStringArrayListExtra("car");
-        Toast.makeText(getApplicationContext(),coches.toString(),Toast.LENGTH_SHORT).show();
+
 
         ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, coches);
 
@@ -41,7 +42,8 @@ public class ListVista extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO Auto-generated method stub
-                Toast.makeText(getBaseContext(), "Selected: " + ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext()," Position: "+position  +"  " +
+                        ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
 
             }
         });

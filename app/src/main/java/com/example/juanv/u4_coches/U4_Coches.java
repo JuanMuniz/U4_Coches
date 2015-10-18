@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -23,11 +25,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class U4_Coches extends Activity {
+public class U4_Coches extends FragmentActivity {
     EditText marca;
-    RadioButton Lview;
-    RadioButton Spiner;
     boolean sdDisponhible;
+    boolean escritura;
     Button addOver;
     RadioButton add;
     Calendar c=Calendar.getInstance();
@@ -35,6 +36,8 @@ public class U4_Coches extends Activity {
     public static String nomeFicheiro = "coches.txt";
     File dirFicheiroSD;
     File rutaCompleta;
+    TextView logGato;
+    private dia dialogoFragmento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +45,11 @@ public class U4_Coches extends Activity {
         setContentView(R.layout.activity_u4__coches);
         marca = (EditText) findViewById(R.id.brandText);
         marca.setTextColor(Color.BLUE);
-        Lview= (RadioButton) findViewById(R.id.Lista);
-        Spiner= (RadioButton)findViewById(R.id.desplegable);
         addOver= (Button) findViewById(R.id.addOverButton);
         add= (RadioButton)findViewById(R.id.addRadio);
         overwrite= (RadioButton)findViewById(R.id.OverwriteRadio);
+        logGato= (TextView)findViewById(R.id.log);
+        dialogoFragmento =new dia();
 
         comprobarEstadoSD();
         establecerDirectorioFicheiro();
@@ -62,13 +65,22 @@ public class U4_Coches extends Activity {
 
 
                OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(rutaCompleta,true));
-               osw.write(marca.getText() + " " + c.get(Calendar.DATE) + "\n");
+               osw.write(marca.getText() + "-" + c.get(Calendar.DATE) +"_"+c.get(Calendar.MONTH) +
+                       "_"+c.get(Calendar.YEAR) +"_"+c.get(Calendar.HOUR_OF_DAY) +   "\n");
                osw.close();
 
+               //Con estas duas views vexo na aplicación as mensaxes do LogCat
+               logGato.setText(rutaCompleta.toString() + "\n" + marca.getText() + "-" + c.get(Calendar.DATE) + "_" +
+                       c.get(Calendar.MONTH) + "_" + c.get(Calendar.YEAR) + "_" + c.get(Calendar.HOUR_OF_DAY) + "\n");
+
+               //Mensaxes que aparecen no LogCat
+               Log.i("Dir: ", rutaCompleta.toString());
+               Log.i("Info: ", marca.getText() + "-" + c.get(Calendar.DATE) + "_" +
+                       c.get(Calendar.MONTH) + "_" + c.get(Calendar.YEAR) + "_" + c.get(Calendar.HOUR_OF_DAY));
                marca.setText("");
 
            } catch (Exception ex) {
-               Log.e("INTERNA", "Error escribindo no ficheiro");
+               Log.e("INTERN", "writing file error");
                ex.printStackTrace();
            }
        }
@@ -79,15 +91,27 @@ public class U4_Coches extends Activity {
 
 
                OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(rutaCompleta,false));
-               osw.write(marca.getText() + " " + c.get(Calendar.DATE) + "\n");
+               osw.write(marca.getText() + "-" + c.get(Calendar.DATE) +"_"+c.get(Calendar.MONTH) +
+                       "_"+c.get(Calendar.YEAR) +"_"+c.get(Calendar.HOUR_OF_DAY) +   "\n");
                osw.close();
 
+               //Con estas duas views vexo na aplicación as mensaxes do LogCat
+               logGato.setText(rutaCompleta.toString() + "\n" + marca.getText() + "-" + c.get(Calendar.DATE) + "_" +
+                       c.get(Calendar.MONTH) + "_" + c.get(Calendar.YEAR) + "_" + c.get(Calendar.HOUR_OF_DAY) + "\n");
+
+               //Mensaxes que aparecen no LogCat
+               Log.i("Dir: ", rutaCompleta.toString());
+               Log.i("Info: ", marca.getText() + "-" + c.get(Calendar.DATE) + "_" +
+                       c.get(Calendar.MONTH) + "_" + c.get(Calendar.YEAR) + "_" + c.get(Calendar.HOUR_OF_DAY));
                marca.setText("");
 
            } catch (Exception ex) {
-               Log.e("INTERNA", "Error escribindo no ficheiro");
+               Log.e("INTERN", "writing file error");
            }
-       }else{
+       }else if((add.isChecked() || overwrite.isChecked()) && marca.getText().toString().equals("")){
+           Toast.makeText(getApplicationContext()," Write a car brand please",Toast.LENGTH_SHORT).show();
+       }
+       else{
            Toast.makeText(getApplicationContext()," Check add or overwrite please",Toast.LENGTH_SHORT).show();
        }
    }
@@ -97,10 +121,10 @@ public class U4_Coches extends Activity {
     public void establecerDirectorioFicheiro() {
 
         if (sdDisponhible) {
-            // dirFicheiroSD = Environment.getExternalStorageDirectory();
+
             dirFicheiroSD = getExternalFilesDir(null);
             rutaCompleta = new File(dirFicheiroSD.getAbsolutePath(), nomeFicheiro);
-            Toast.makeText(getApplicationContext(),rutaCompleta.toString(),Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -111,12 +135,13 @@ public class U4_Coches extends Activity {
 
         if (estado.equals(Environment.MEDIA_MOUNTED)) {
             sdDisponhible=true;
+            escritura=true;
 
-            Toast.makeText(getApplicationContext(),"Mounted ",Toast.LENGTH_SHORT).show();
         } else if (estado.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
             sdDisponhible=true;
             Toast.makeText(getApplicationContext(), "Read only ", Toast.LENGTH_SHORT).show();
-        }else{
+        }else if(escritura==false){
+            Toast.makeText(getApplicationContext(), "Read only, closing app ", Toast.LENGTH_SHORT).show();
             finish();}
     }
 
@@ -124,43 +149,29 @@ public class U4_Coches extends Activity {
    //chamar as segundas activities
     public void callList(View v){
 
-
+        Bundle feixe= new Bundle();
         ArrayList<String> coches=new ArrayList<>();
-        //creo as intents
-        Intent intent=new Intent(this, ListVista.class);
-        Intent intentSp=new Intent(this, Spiner.class);
+
 
         //leo o ficheiro
         try {
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(openFileInput(nomeFicheiro)));
 
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(rutaCompleta)));
             while (br.ready()) {
                 coches.add(br.readLine());
             }
             br.close();
-            Toast.makeText(this, "Datos leidos ", Toast.LENGTH_SHORT).show();
+
         } catch (Exception ex) {
-            Toast.makeText(this, "Problemas lendo o ficheiro", Toast.LENGTH_SHORT).show();
-            Log.e("INTERNA", "Erro lendo o ficheiro. ");
+            Toast.makeText(this, "Problems reading file", Toast.LENGTH_SHORT).show();
+            Log.e("INTERN", "Reading file error ");
 
         }
+        feixe.putStringArrayList("car",coches);
+        dialogoFragmento.setArguments(feixe);
+        dialogoFragmento.show(getFragmentManager(), "");
 
-
-        //inicio a que esté marcada
-        if (Lview.isChecked()){
-
-            intent.putStringArrayListExtra("car", coches);
-            startActivity(intent);
-        }
-        if (Spiner.isChecked()){
-
-            intent.putStringArrayListExtra("coches",coches);
-            startActivity(intentSp);
-        }
-        if (!(Spiner.isChecked()|| Lview.isChecked())){
-            Toast.makeText(getApplicationContext()," Select the view mode",Toast.LENGTH_SHORT).show();
-        }
     }
 
 

@@ -77,56 +77,15 @@
         android:hint="@string/field" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <Button
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:onClick="callList"
+        android:id="@+id/ViewCL"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
+        android:text="@string/LstSpiBtn" />
 
-        <LinearLayout
-
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <RadioGroup
-                android:id="@+id/groupLsSp"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <RadioButton
-                    android:id="@+id/Lista"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/lstv" />
-
-                <RadioButton
-                    android:id="@+id/desplegable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Spin" />
-
-            </RadioGroup>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <Button
-                android:onClick="callList"
-                android:id="@+id/ViewCL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/LstSpiBtn" />
-        </LinearLayout>
-
-    </LinearLayout>
 
 </LinearLayout>
